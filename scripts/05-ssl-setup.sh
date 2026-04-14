@@ -12,7 +12,6 @@ apt install -y libnss3-tools wget
 
 # Install mkcert
 echo "[2/5] Installing mkcert..."
-MKCERT_VERSION="v1.4.4"
 wget -q "https://dl.filippo.io/mkcert/latest?for=linux/amd64" -O /usr/local/bin/mkcert
 chmod +x /usr/local/bin/mkcert
 

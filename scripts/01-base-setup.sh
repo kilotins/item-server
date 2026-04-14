@@ -49,6 +49,11 @@ apt install -y \
   gnupg \
   lsb-release \
   linuxlogo \
+  tmux \
+  ncdu \
+  dnsutils \
+  iotop \
+  bash-completion \
   sudo
 
 # NTP — ensure clock is synced

@@ -1,0 +1,60 @@
+## OpenSearch stack for Enonic Application Monitor demo
+## Deploy via Coolify or: docker compose up -d
+
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.19.1
+    container_name: opensearch
+    environment:
+      - discovery.type=single-node
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD:-StrongP@ssw0rd!}
+      - OPENSEARCH_JAVA_OPTS=-Xms4g -Xmx4g
+      - plugins.security.disabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - opensearch-net
+    restart: unless-stopped
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.19.1
+    container_name: opensearch-dashboards
+    environment:
+      - OPENSEARCH_HOSTS=["https://opensearch:9200"]
+    ports:
+      - "5601:5601"
+    networks:
+      - opensearch-net
+    depends_on:
+      - opensearch
+    restart: unless-stopped
+
+  fluent-bit:
+    image: fluent/fluent-bit:3.2
+    container_name: fluent-bit
+    volumes:
+      - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ./fluent-bit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
+    networks:
+      - opensearch-net
+    depends_on:
+      - opensearch
+    restart: unless-stopped
+
+volumes:
+  opensearch-data:
+    driver: local
+
+networks:
+  opensearch-net:
+    driver: bridge

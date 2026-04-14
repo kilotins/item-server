@@ -190,6 +190,184 @@ curl -X GET "https://localhost:9200/_nodes/stats/jvm?pretty" \
   -u admin:password --insecure
 ```
 
+## AI-integration med itemai (ML Commons)
+
+### Registrera itemai som remote model connector
+```bash
+# Skapa connector mot itemai (OpenAI-kompatibelt API)
+curl -X POST "https://localhost:9200/_plugins/_ml/connectors/_create" \
+  -u admin:password --insecure \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "itemai-llm",
+    "description": "Intern LM Studio på itemai",
+    "version": "1",
+    "protocol": "http",
+    "parameters": {
+      "model": "openai/gpt-oss-20b"
+    },
+    "actions": [
+      {
+        "action_type": "predict",
+        "method": "POST",
+        "url": "http://itemai:1234/v1/chat/completions",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "request_body": "{ \"model\": \"${parameters.model}\", \"messages\": ${parameters.messages} }"
+      }
+    ]
+  }'
+# Spara connector_id från svaret
+```
+
+### Registrera modellen
+```bash
+curl -X POST "https://localhost:9200/_plugins/_ml/models/_register" \
+  -u admin:password --insecure \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "itemai-gpt-oss-20b",
+    "function_name": "remote",
+    "description": "GPT-OSS 20B via itemai",
+    "connector_id": "<connector_id>"
+  }'
+# Spara model_id från svaret
+```
+
+### Deploya modellen
+```bash
+curl -X POST "https://localhost:9200/_plugins/_ml/models/<model_id>/_deploy" \
+  -u admin:password --insecure
+```
+
+### Testa modellen
+```bash
+curl -X POST "https://localhost:9200/_plugins/_ml/models/<model_id>/_predict" \
+  -u admin:password --insecure \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameters": {
+      "messages": [
+        {"role": "system", "content": "Du är en applikasjonsovervåkingsekspert. Analyser feillogger og gi en kort rapport på norsk."},
+        {"role": "user", "content": "NullPointerException i ArticlePageController kl 03:12, 23 forekomster over 8 minutter."}
+      ]
+    }
+  }'
+```
+
+### Registrera embedding-modell (för RAG/semantic search)
+```bash
+# Connector för Nomic Embed på itemai
+curl -X POST "https://localhost:9200/_plugins/_ml/connectors/_create" \
+  -u admin:password --insecure \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "itemai-embedding",
+    "description": "Nomic Embed via itemai",
+    "version": "1",
+    "protocol": "http",
+    "parameters": {
+      "model": "text-embedding-nomic-embed-text-v1.5"
+    },
+    "actions": [
+      {
+        "action_type": "predict",
+        "method": "POST",
+        "url": "http://itemai:1234/v1/embeddings",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "request_body": "{ \"model\": \"${parameters.model}\", \"input\": ${parameters.input} }"
+      }
+    ]
+  }'
+```
+
+### Tillgängliga modeller på itemai
+
+| Modell | Användning | Context |
+|--------|-----------|---------|
+| openai/gpt-oss-20b | Rapporter, analys | 128K |
+| nvidia/nemotron-3-nano | Djupanalys, stora loggvolymer | 262K |
+| zai-org/glm-4.7-flash | Sammanfattningar | 200K |
+| text-embedding-nomic-embed-text-v1.5 | RAG, semantic search | 2K |
+
+## Alerting — Slack-integration
+
+### Skapa Slack webhook-destination
+```bash
+curl -X POST "https://localhost:9200/_plugins/_alerting/destinations" \
+  -u admin:password --insecure \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "item-slack",
+    "type": "slack",
+    "slack": {
+      "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+    }
+  }'
+```
+
+### Skapa monitor med AI-genererad rapport till Slack
+```bash
+# Exempel: Alert vid hög feilfrekvens — skickar till Slack
+curl -X POST "https://localhost:9200/_plugins/_alerting/monitors" \
+  -u admin:password --insecure \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Hög feilfrekvens",
+    "type": "monitor",
+    "enabled": true,
+    "schedule": {
+      "period": { "interval": 5, "unit": "MINUTES" }
+    },
+    "inputs": [
+      {
+        "search": {
+          "indices": ["enonic-*"],
+          "query": {
+            "bool": {
+              "must": [
+                { "match": { "level": "ERROR" } },
+                { "range": { "@timestamp": { "gte": "now-5m" } } }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "triggers": [
+      {
+        "name": "Mange feil",
+        "severity": "1",
+        "condition": {
+          "script": { "source": "ctx.results[0].hits.total.value > 10" }
+        },
+        "actions": [
+          {
+            "name": "Slack-varsel",
+            "destination_id": "<destination_id>",
+            "message_template": {
+              "source": "{{ctx.monitor.name}}: {{ctx.results[0].hits.total.value}} feil siste 5 minutter i {{ctx.trigger.name}}"
+            }
+          }
+        ]
+      }
+    ]
+  }'
+```
+
+### Alerttyper att sätta upp
+
+| Alert | Trigger | Kanal |
+|-------|---------|-------|
+| Sajt nere | Uppetidskontroll misslyckas 2x | Slack + e-post |
+| Hög feilfrekvens | >10 ERROR/5 min | Slack |
+| Långsam responstid | Snitt >2s i 10 min | Slack |
+| SSL snart utgånget | <30 dagar kvar | Slack + e-post |
+| Disk nästan full | >85% | Slack |
+
 ## Felsökning
 
 ### OpenSearch startar inte

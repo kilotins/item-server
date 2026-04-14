@@ -9,12 +9,16 @@ SERVER_IP="${1:-$(hostname -I | awk '{print $1}')}"
 echo "=== Item Server: DNS Setup ==="
 echo "Server IP: ${SERVER_IP}"
 
+# Disable systemd-resolved if running (conflicts with dnsmasq)
+echo "[1/4] Disabling systemd-resolved if active..."
+systemctl disable --now systemd-resolved 2>/dev/null || true
+
 # Install dnsmasq
-echo "[1/3] Installing dnsmasq..."
+echo "[2/4] Installing dnsmasq..."
 apt install -y dnsmasq
 
 # Configure wildcard DNS
-echo "[2/3] Configuring *.item.intern -> ${SERVER_IP}..."
+echo "[3/4] Configuring *.item.intern -> ${SERVER_IP}..."
 cat > /etc/dnsmasq.d/item-intern.conf << EOF
 # Item Consulting internal DNS
 # All *.item.intern resolves to this server
@@ -22,7 +26,7 @@ address=/item.intern/${SERVER_IP}
 EOF
 
 # Restart dnsmasq
-echo "[3/3] Restarting dnsmasq..."
+echo "[4/4] Restarting dnsmasq..."
 systemctl restart dnsmasq
 systemctl enable dnsmasq
 

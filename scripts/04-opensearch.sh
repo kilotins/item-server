@@ -9,12 +9,13 @@ echo "=== Item Server: OpenSearch Preparation ==="
 # Set vm.max_map_count (required by OpenSearch)
 echo "[1/2] Setting vm.max_map_count=262144..."
 sysctl -w vm.max_map_count=262144
-echo "vm.max_map_count=262144" >> /etc/sysctl.conf
+echo "vm.max_map_count=262144" > /etc/sysctl.d/99-opensearch.conf
 
 # Create data directory
 echo "[2/2] Creating OpenSearch data directory..."
 mkdir -p /opt/opensearch-data
-chmod 777 /opt/opensearch-data
+chown 1000:1000 /opt/opensearch-data
+chmod 750 /opt/opensearch-data
 
 echo ""
 echo "=== OpenSearch host preparation complete ==="

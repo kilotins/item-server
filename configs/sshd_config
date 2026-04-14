@@ -1,7 +1,7 @@
 # Item Server — Hardened SSH config
 # Copy to /etc/ssh/sshd_config after key-based login is confirmed
 
-Port 22
+Port 10022
 Protocol 2
 
 # Authentication

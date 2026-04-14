@@ -21,12 +21,17 @@ sed -i 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 localectl set-locale LANG=en_US.UTF-8
 
+# Create item group
+echo "[4/10] Creating 'item' group..."
+groupadd -f item
+usermod -aG item eric
+
 # Update system
-echo "[4/9] Updating system..."
+echo "[5/10] Updating system..."
 apt update && apt upgrade -y
 
 # Install essential packages
-echo "[5/9] Installing base packages..."
+echo "[6/10] Installing base packages..."
 apt install -y \
   curl \
   wget \
@@ -44,21 +49,21 @@ apt install -y \
   sudo
 
 # NTP — ensure clock is synced
-echo "[6/9] Enabling NTP time sync..."
+echo "[7/10] Enabling NTP time sync..."
 timedatectl set-ntp true
 
 # Configure firewall
-echo "[7/9] Configuring firewall..."
+echo "[8/10] Configuring firewall..."
 ufw default deny incoming
 ufw default allow outgoing
-ufw allow 10022/tcp # SSH
+ufw allow 22/tcp    # SSH (moved to 10022 in 06-harden-ssh.sh)
 ufw allow 80/tcp    # HTTP
 ufw allow 443/tcp   # HTTPS
 ufw allow 8000/tcp  # Coolify UI
 ufw --force enable
 
 # Harden SSH
-echo "[8/9] Hardening SSH..."
+echo "[9/10] Hardening SSH..."
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 
 # Disable password auth (ensure you have SSH key access first!)
@@ -71,7 +76,7 @@ cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 cat > /etc/fail2ban/jail.local << EOF
 [sshd]
 enabled = true
-port = 10022
+port = 22
 maxretry = 5
 bantime = 3600
 findtime = 600
@@ -82,7 +87,7 @@ systemctl restart fail2ban
 systemctl restart sshd
 
 # Swap — safety net for OpenSearch memory pressure
-echo "[9/9] Setting up swap..."
+echo "[10/10] Setting up swap..."
 if [ ! -f /swapfile ]; then
   fallocate -l 4G /swapfile
   chmod 600 /swapfile
@@ -104,7 +109,8 @@ echo ""
 echo "Hostname:  item-server"
 echo "Timezone:  Europe/Oslo"
 echo "Locale:    en_US.UTF-8"
-echo "Firewall:  10022, 80, 443, 8000"
+echo "Group:     item (eric added)"
+echo "Firewall:  22, 80, 443, 8000"
 echo "Fail2ban:  SSH protection active"
 echo "Swap:      4 GB"
 echo "NTP:       enabled"
@@ -114,3 +120,4 @@ echo "  - Configure static IP in /etc/network/interfaces or DHCP reservation"
 echo "  - BIOS: Power On with AC, Lid Close = do nothing"
 echo ""
 echo "Next: Run 02-install-coolify.sh"
+echo "Last: Run 06-harden-ssh.sh (moves SSH to port 10022)"

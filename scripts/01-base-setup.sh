@@ -65,6 +65,8 @@ echo "[8/12] Configuring firewall..."
 ufw default deny incoming
 ufw default allow outgoing
 ufw allow 22/tcp    # SSH (moved to 10022 in 06-harden-ssh.sh)
+ufw allow 53/udp    # DNS (dnsmasq)
+ufw allow 53/tcp    # DNS (dnsmasq)
 ufw allow 80/tcp    # HTTP
 ufw allow 443/tcp   # HTTPS
 ufw allow 8000/tcp  # Coolify UI

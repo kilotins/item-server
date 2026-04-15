@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Item Server — Setup wildcard SSL for *.item.lan
+# Item Server — Setup wildcard SSL for *.item.intern
 # Run as root: sudo ./05-ssl-setup.sh
 
 set -euo pipefail
@@ -20,13 +20,13 @@ echo "[3/5] Creating local Certificate Authority..."
 CAROOT=/opt/ssl/ca mkcert -install
 
 # Generate wildcard cert
-echo "[4/5] Generating wildcard cert for *.item.lan..."
+echo "[4/5] Generating wildcard cert for *.item.intern..."
 mkdir -p /opt/ssl/certs
 CAROOT=/opt/ssl/ca mkcert \
   -cert-file /opt/ssl/certs/item-intern.pem \
   -key-file /opt/ssl/certs/item-intern-key.pem \
-  "*.item.lan" \
-  "item.lan"
+  "*.item.intern" \
+  "item.intern"
 
 chmod 600 /opt/ssl/certs/item-intern-key.pem
 
@@ -50,7 +50,7 @@ EOF
 echo ""
 echo "=== SSL setup complete ==="
 echo ""
-echo "Wildcard cert:  *.item.lan"
+echo "Wildcard cert:  *.item.intern"
 echo "Cert file:      /opt/ssl/certs/item-intern.pem"
 echo "Key file:       /opt/ssl/certs/item-intern-key.pem"
 echo "CA root cert:   /opt/ssl/ca/rootCA.pem"

@@ -7,7 +7,7 @@
 curl -X GET "https://localhost:9200" -u admin:password --insecure
 
 # Via DNS
-curl -X GET "https://opensearch.item.lan:9200" -u admin:password --insecure
+curl -X GET "https://opensearch.item.intern:9200" -u admin:password --insecure
 ```
 
 ## Index Management

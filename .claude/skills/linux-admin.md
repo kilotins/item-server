@@ -44,11 +44,11 @@ docker system prune -a    # VARNING: tar bort oanvända images/volumes
 sudo ss -tlnp
 
 # DNS-uppslag
-dig myapp.item.lan
-nslookup myapp.item.lan
+dig myapp.item.intern
+nslookup myapp.item.intern
 
 # Testa anslutning
-curl -v https://myapp.item.lan
+curl -v https://myapp.item.intern
 ping 192.168.50.150
 
 # Brandväggsregler

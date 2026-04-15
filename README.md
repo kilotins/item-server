@@ -48,7 +48,7 @@ item-server/
 ├── scripts/
 │   ├── 01-base-setup.sh   — pakker, brannmur, SSH-herding
 │   ├── 02-install-coolify.sh
-│   ├── 03-dns-setup.sh    — dnsmasq for *.item.lan
+│   ├── 03-dns-setup.sh    — dnsmasq for *.item.intern
 │   └── 04-opensearch.sh   — OpenSearch kernel-settings
 ├── configs/
 │   ├── sshd_config        — herdet SSH-konfigurasjon

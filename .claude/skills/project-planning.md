@@ -27,7 +27,7 @@ Planlegging og oppfølging av serveroppsett, PoC-prosjekter, og tjenesteutviklin
 - [ ] Opprett admin-konto i Coolify UI
 - [ ] Opprett Teams: logpilot, enonic, sandbox
 - [ ] Kjør `03-dns-setup.sh` (intern DNS)
-- [ ] Test: `ping test.item.intern`
+- [ ] Test: `ping test.item.lan`
 
 ### Dag 3: Ekstern tilgang
 - [ ] Sett opp Cloudflare Tunnel

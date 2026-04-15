@@ -2,7 +2,7 @@
 
 ## Vad är detta?
 
-Item Server är vår interna utvecklingsplattform. Du kan deploya appar, API:er och prototyper med `git push` — de blir automatiskt live med HTTPS på `dittnamn.item.intern`.
+Item Server är vår interna utvecklingsplattform. Du kan deploya appar, API:er och prototyper med `git push` — de blir automatiskt live med HTTPS på `dittnamn.item.lan`.
 
 ## Förutsättningar
 
@@ -37,12 +37,12 @@ CMD ["node", "index.js"]
 
 ## 2. Koppla i Coolify (3 min)
 
-1. Gå till **https://coolify.item.intern:8000**
+1. Gå till **https://coolify.item.lan:8000**
 2. Logga in med ditt Item-konto
 3. Välj team **sandbox**
 4. Klicka **New Resource → Public/Private Repository**
 5. Välj ditt GitHub-repo
-6. Sätt domän: `mitt-projekt.item.intern`
+6. Sätt domän: `mitt-projekt.item.lan`
 7. Klicka **Deploy**
 
 ## 3. Pusha och deploya (30 sek)
@@ -53,7 +53,7 @@ git commit -m "First deploy"
 git push
 ```
 
-Klart! Appen är live på `https://mitt-projekt.item.intern`
+Klart! Appen är live på `https://mitt-projekt.item.lan`
 
 ## Behöver du en databas?
 

@@ -18,11 +18,11 @@ echo "[2/4] Installing dnsmasq..."
 apt install -y dnsmasq
 
 # Configure wildcard DNS
-echo "[3/4] Configuring *.item.intern -> ${SERVER_IP}..."
+echo "[3/4] Configuring *.item.lan -> ${SERVER_IP}..."
 cat > /etc/dnsmasq.d/item-intern.conf << EOF
 # Item Consulting internal DNS
-# All *.item.intern resolves to this server
-address=/item.intern/${SERVER_IP}
+# All *.item.lan resolves to this server
+address=/item.lan/${SERVER_IP}
 EOF
 
 # Restart dnsmasq
@@ -32,10 +32,10 @@ systemctl enable dnsmasq
 
 echo ""
 echo "=== DNS setup complete ==="
-echo "All *.item.intern now resolves to ${SERVER_IP}"
+echo "All *.item.lan now resolves to ${SERVER_IP}"
 echo ""
 echo "To use from other machines, set DNS server to ${SERVER_IP}"
 echo "Or add to each machine's /etc/hosts:"
-echo "  ${SERVER_IP}  coolify.item.intern"
-echo "  ${SERVER_IP}  logpilot.item.intern"
-echo "  ${SERVER_IP}  opensearch.item.intern"
+echo "  ${SERVER_IP}  coolify.item.lan"
+echo "  ${SERVER_IP}  logpilot.item.lan"
+echo "  ${SERVER_IP}  opensearch.item.lan"

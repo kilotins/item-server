@@ -47,7 +47,7 @@ Lenovo P15s (32 GB RAM)
 ## Nettverk
 
 - Fast intern IP (f.eks. 192.168.1.100)
-- Intern DNS via dnsmasq for `*.item.intern`
+- Intern DNS via dnsmasq for `*.item.lan`
 - Ekstern tilgang: Cloudflare Tunnel (gratis) eller Tailscale
 - SSH-tilgang for administrasjon
 

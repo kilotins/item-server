@@ -29,12 +29,12 @@ Coolify har innebygd "Teams"-funksjonalitet som gir ulik tilgang per sone.
 - **Web UI** — ingen terminalkunskap nodvendig for a deploye
 - **Databaser** — PostgreSQL, Redis, MySQL med ett klikk
 - **Docker Compose** — for storre stackar (f.eks. OpenSearch)
-- **Subdomener** — `prosjekt.item.intern` for hver app
+- **Subdomener** — `prosjekt.item.lan` for hver app
 - **5-10 samtidige apper** med 32 GB RAM
 
 ### Eksempel pa bruk
 
-- Borse pusher et Claude-prosjekt til GitHub, det er live pa `borses-app.item.intern` etter 2 minutter
+- Borse pusher et Claude-prosjekt til GitHub, det er live pa `borses-app.item.lan` etter 2 minutter
 - Eric demonstrerer OpenSearch-dashboardet for en Enonic-kunde via Cloudflare Tunnel
 - Teamet tester en ny API mot en lokal PostgreSQL-database
 
@@ -77,7 +77,7 @@ Vi evaluerte fire alternativer:
 ### Nettverk
 
 - Fast intern IP pa kontornettverket (f.eks. 192.168.1.100)
-- Intern DNS via dnsmasq for `*.item.intern`
+- Intern DNS via dnsmasq for `*.item.lan`
 - Ekstern tilgang via **Cloudflare Tunnel** (gratis, ingen aaapne porter) eller **Tailscale** (gratis VPN)
 
 ### Sikkerhet og drift
@@ -93,7 +93,7 @@ Vi evaluerte fire alternativer:
 |-----|-----------|---------|
 | 1 | Installer Debian 12 Server | Fungerende OS |
 | 1 | Installer Coolify + konfigurer Teams | Plattform klar |
-| 1 | Sett opp intern DNS + fast IP | `*.item.intern` fungerer |
+| 1 | Sett opp intern DNS + fast IP | `*.item.lan` fungerer |
 | 2 | Deploy LogPilot som test | Forste app live |
 | 2 | Deploy OpenSearch-stack | Demo-miljo klar |
 | 2 | Inviter teamet, kort intro | Alle kan deploye |

@@ -44,7 +44,7 @@ Lagre og restart (F10).
 4. Lokasjon: Norway
 5. Tastatur: Norwegian (eller det du foretrekker)
 6. Hostname: `item-server`
-7. Domain: `item.intern`
+7. Domain: `item.lan`
 8. Root-passord: velg et sterkt passord
 9. Ny bruker: `eric` (eller ditt navn)
 10. Partisjonering: **Guided - use entire disk** (sletter Windows!)

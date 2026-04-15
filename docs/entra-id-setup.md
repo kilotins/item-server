@@ -8,7 +8,7 @@ Koppla Coolify mot Entra ID (Azure AD) så teamet loggar in med sina Item-konton
 2. Klicka **New registration**
    - Name: `Item Server - Coolify`
    - Supported account types: **Single tenant** (bara Item)
-   - Redirect URI: **Web** → `https://coolify.item.intern/auth/callback`
+   - Redirect URI: **Web** → `https://coolify.item.lan/auth/callback`
 3. Klicka **Register**
 
 ## 2. Notera credentials
@@ -35,7 +35,7 @@ Skapa en client secret:
 
 ## 4. Konfigurera Coolify
 
-1. Logga in som admin på `https://coolify.item.intern:8000`
+1. Logga in som admin på `https://coolify.item.lan:8000`
 2. Gå till **Settings → OAuth**
 3. Välj **Microsoft** / **Azure AD**
 4. Fyll i:
@@ -60,6 +60,6 @@ Skapa en client secret:
 
 | Problem | Lösning |
 |---------|---------|
-| Redirect URI mismatch | Kontrollera att URI i Azure matchar exakt: `https://coolify.item.intern/auth/callback` |
+| Redirect URI mismatch | Kontrollera att URI i Azure matchar exakt: `https://coolify.item.lan/auth/callback` |
 | Consent saknas | Klicka "Grant admin consent" i API permissions |
 | Client secret har gått ut | Skapa ny secret i Azure, uppdatera i Coolify |

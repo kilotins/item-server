@@ -7,31 +7,31 @@ set -euo pipefail
 echo "=== Item Server: Base Setup ==="
 
 # System identity
-echo "[1/13] Setting hostname..."
-hostnamectl set-hostname item-server
+echo "[1/12] Setting hostname..."
+hostnamectl set-hostname itemserver
 
 # Timezone
-echo "[2/13] Setting timezone to Europe/Oslo..."
+echo "[2/12] Setting timezone to Europe/Oslo..."
 timedatectl set-timezone Europe/Oslo
 
 # Locale
-echo "[3/13] Setting locale to en_US.UTF-8..."
+echo "[3/12] Setting locale to en_US.UTF-8..."
 apt install -y locales
 sed -i 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 localectl set-locale LANG=en_US.UTF-8
 
 # Create item group
-echo "[4/13] Creating 'item' group..."
+echo "[4/12] Creating 'item' group..."
 groupadd -f item
 usermod -aG item eric
 
 # Update system
-echo "[5/13] Updating system..."
+echo "[5/12] Updating system..."
 apt update && apt upgrade -y
 
 # Install essential packages
-echo "[6/13] Installing base packages..."
+echo "[6/12] Installing base packages..."
 apt install -y \
   curl \
   wget \
@@ -57,11 +57,11 @@ apt install -y \
   sudo
 
 # NTP — ensure clock is synced
-echo "[7/13] Enabling NTP time sync..."
+echo "[7/12] Enabling NTP time sync..."
 timedatectl set-ntp true
 
 # Configure firewall
-echo "[8/13] Configuring firewall..."
+echo "[8/12] Configuring firewall..."
 ufw default deny incoming
 ufw default allow outgoing
 ufw allow 22/tcp    # SSH (moved to 10022 in 06-harden-ssh.sh)
@@ -71,7 +71,7 @@ ufw allow 8000/tcp  # Coolify UI
 ufw --force enable
 
 # Harden SSH
-echo "[9/13] Hardening SSH..."
+echo "[9/12] Hardening SSH..."
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 
 # Disable password auth (ensure you have SSH key access first!)
@@ -94,24 +94,14 @@ systemctl restart fail2ban
 
 systemctl restart sshd
 
-# Swap — safety net for OpenSearch memory pressure
-echo "[10/13] Setting up swap..."
-if [ ! -f /swapfile ]; then
-  fallocate -l 4G /swapfile
-  chmod 600 /swapfile
-  mkswap /swapfile
-  swapon /swapfile
-  echo '/swapfile none swap sw 0 0' >> /etc/fstab
-fi
-
 # Enable sysstat (sar) for performance monitoring
-echo "[11/13] Enabling sysstat..."
+echo "[10/12] Enabling sysstat..."
 sed -i 's/ENABLED="false"/ENABLED="true"/' /etc/default/sysstat
 systemctl enable sysstat
 systemctl restart sysstat
 
 # Login banner
-echo "[12/13] Setting up login banner..."
+echo "[11/12] Setting up login banner..."
 cat > /usr/local/sbin/update-motd.sh << 'SCRIPT'
 #!/bin/sh
 OUTPUT="/etc/motd"
@@ -135,7 +125,7 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 EOF
 
 # Enable automatic security updates
-echo "[13/13] Enabling automatic security updates..."
+echo "[12/12] Enabling automatic security updates..."
 cat > /etc/apt/apt.conf.d/20auto-upgrades << EOF
 APT::Periodic::Update-Package-Lists "1";
 APT::Periodic::Unattended-Upgrade "1";
@@ -145,13 +135,12 @@ echo 'Unattended-Upgrade::Automatic-Reboot "false";' > /etc/apt/apt.conf.d/50una
 echo ""
 echo "=== Base setup complete ==="
 echo ""
-echo "Hostname:  item-server"
+echo "Hostname:  itemserver"
 echo "Timezone:  Europe/Oslo"
 echo "Locale:    en_US.UTF-8"
 echo "Group:     item (eric added)"
 echo "Firewall:  22, 80, 443, 8000"
 echo "Fail2ban:  SSH protection active"
-echo "Swap:      4 GB"
 echo "NTP:       enabled"
 echo "Sysstat:   enabled (sar)"
 echo "nmon:      installed"
